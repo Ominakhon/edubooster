@@ -36,6 +36,14 @@ public class AuthenticationService {
     private final MessageSource messageSource;
 
     public AuthenticationResponse signUp(AuthenticationRequest userDto, HttpServletRequest request) {
+        if (userRepository.existsByEmail(userDto.getEmail())) {
+            throw new UserAccountException(
+                    messageSource.getMessage("application.exception.notification.EmailExists",
+                            new Object[]{userDto.getEmail()},
+                            RequestContextUtils.getLocale(request))
+            );
+        }
+
         VerificationCode code = VerificationCode.builder()
                 .code(generateVerificationCode(6))
                 .expiresAt(LocalDateTime.now().plusMinutes(1))
