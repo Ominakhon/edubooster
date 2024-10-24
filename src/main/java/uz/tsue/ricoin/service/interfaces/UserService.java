@@ -1,7 +1,8 @@
 package uz.tsue.ricoin.service.interfaces;
 
+import jakarta.servlet.http.HttpServletRequest;
 import uz.tsue.ricoin.entity.User;
-import uz.tsue.ricoin.dto.response.UserResponseDto;
+import uz.tsue.ricoin.dto.UserDto;
 
 import java.util.List;
 
@@ -10,7 +11,7 @@ public interface UserService {
 
     User findById(Long id);
 
-    List<UserResponseDto> findAll();
+    List<UserDto> findAll();
 
     void save(User user);
 
@@ -20,7 +21,10 @@ public interface UserService {
 
     void addBalance(User user, int amount);
 
-    UserResponseDto getCurrentUser(User user);
+    UserDto getCurrentUser(User user);
 
 
+    void updateUser(UserDto userDto);
+
+    void deleteUser(User user, HttpServletRequest request);
 }

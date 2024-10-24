@@ -1,21 +1,29 @@
 package uz.tsue.ricoin.service.impls;
 
+import jakarta.persistence.EntityManager;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Service;
+import org.springframework.web.servlet.support.RequestContextUtils;
 import uz.tsue.ricoin.entity.User;
+import uz.tsue.ricoin.exceptions.UserAccountException;
 import uz.tsue.ricoin.repository.UserRepository;
-import uz.tsue.ricoin.dto.response.UserResponseDto;
+import uz.tsue.ricoin.dto.UserDto;
 import uz.tsue.ricoin.service.interfaces.UserService;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
+    private final EntityManager entityManager;
+    private final MessageSource messageSource;
 
     @Override
     public User findByEmail(String email) {
@@ -28,12 +36,12 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public List<UserResponseDto> findAll() {
+    public List<UserDto> findAll() {
         List<User> userList = userRepository.findAll();
-        List<UserResponseDto> users = new ArrayList<>();
+        List<UserDto> users = new ArrayList<>();
         for (User user : userList) {
             users.add(
-                    UserResponseDto.builder()
+                    UserDto.builder()
                             .email(user.getEmail())
                             .phoneNumber(user.getPhoneNumber())
                             .firstName(user.getFirstName())
@@ -71,8 +79,8 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserResponseDto getCurrentUser(User user) {
-        return UserResponseDto.builder()
+    public UserDto getCurrentUser(User user) {
+        return UserDto.builder()
                 .email(user.getEmail())
                 .firstName(user.getFirstName())
                 .lastName(user.getLastName())
@@ -84,4 +92,27 @@ public class UserServiceImpl implements UserService {
                 .orders(user.getOrders())
                 .build();
     }
+
+
+    @Override
+    public void updateUser(UserDto userDto) {
+        User user = userRepository.findByEmail(userDto.getEmail())
+                .orElseThrow(RuntimeException::new);
+        Optional.ofNullable(userDto.getFirstName()).ifPresent(user::setFirstName);
+        Optional.ofNullable(userDto.getLastName()).ifPresent(user::setLastName);
+        Optional.ofNullable(userDto.getGroupName()).ifPresent(user::setGroupName);
+        Optional.ofNullable(userDto.getPhoneNumber()).ifPresent(user::setPhoneNumber);
+        userRepository.save(user);
+    }
+
+    @Override
+    public void deleteUser(User user, HttpServletRequest request) {
+        User userToDelete = userRepository.findById(user.getId())
+                .orElseThrow(() -> new UserAccountException(
+                        messageSource.getMessage("application.exception.notification.UserNotFound", null, RequestContextUtils.getLocale(request))
+                ));
+
+        userRepository.delete(userToDelete);
+    }
 }
+
