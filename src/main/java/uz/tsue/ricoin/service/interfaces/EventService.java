@@ -1,7 +1,6 @@
 package uz.tsue.ricoin.service.interfaces;
 
 import uz.tsue.ricoin.dto.EventDto;
-import uz.tsue.ricoin.entity.Event;
 
 import java.util.List;
 
@@ -11,7 +10,7 @@ public interface EventService {
 
     List<EventDto> getAll();
 
-    void add(EventDto eventDto);
+    EventDto create(EventDto eventDto);
 
     void update(Long id, EventDto eventDto);
 

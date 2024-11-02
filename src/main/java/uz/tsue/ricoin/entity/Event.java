@@ -20,10 +20,9 @@ public class Event {
     private String name;
     private String description;
     private String place;
-    private Integer prize;
+    private Integer price;
     private String promoCode;
-    private LocalDateTime availableFrom;
-    private LocalDateTime availableTill;
+    private LocalDateTime dateTime;
 
     private boolean isActive;
 

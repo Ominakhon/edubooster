@@ -2,20 +2,15 @@ package uz.tsue.ricoin.controller;
 
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
-import org.springframework.context.MessageSource;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.support.RequestContextUtils;
+import uz.tsue.ricoin.dto.response.UserDto;
 import uz.tsue.ricoin.entity.User;
-import uz.tsue.ricoin.dto.UserDto;
-import uz.tsue.ricoin.exceptions.UserAccountException;
-import uz.tsue.ricoin.repository.UserRepository;
-import uz.tsue.ricoin.service.interfaces.UserService;
 import uz.tsue.ricoin.service.NotificationService;
+import uz.tsue.ricoin.service.interfaces.UserService;
 
 import java.util.List;
 
@@ -25,8 +20,6 @@ import java.util.List;
 public class UserController {
     private final UserService userService;
     private final NotificationService notificationService;
-    private final UserRepository userRepository;
-    private final MessageSource messageSource;
 
     @GetMapping("/me")
     public ResponseEntity<UserDto> authenticatedUser(@AuthenticationPrincipal User user) {
@@ -51,23 +44,19 @@ public class UserController {
 
 
     @PreAuthorize("hasAnyAuthority('ADMIN')")
-    @PutMapping("/update-profile")
-    public ResponseEntity<?> updateUser(@RequestBody UserDto user, HttpServletRequest request) {
-        userService.updateUser(user);
+    @PutMapping("/update")
+    public ResponseEntity<?> update(@RequestBody UserDto user, HttpServletRequest request) {
+        userService.update(user);
         return ResponseEntity.status(HttpStatus.CREATED)
-                .body(notificationService.generateCreatedNotificationMessage(request));
-
-
+                .body(notificationService.generateUpdatedNotificationMessage(request));
     }
 
     @PreAuthorize("hasAnyAuthority('ADMIN')")
-    @DeleteMapping("/delete-user/{id}")
-    public ResponseEntity<?> deleteUser(@PathVariable long id, HttpServletRequest request) {
-        User user = new User();
-        user.setId(id);
-        userService.deleteUser(user, request);
-        return ResponseEntity.ok().build();
-
+    @DeleteMapping("/{id}/delete")
+    public ResponseEntity<?> delete(@PathVariable Long id, HttpServletRequest request) {
+        userService.delete(id, request);
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(notificationService.generateRemovedNotificationMessage(request));
     }
 
 }

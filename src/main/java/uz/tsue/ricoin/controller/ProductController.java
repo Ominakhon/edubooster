@@ -33,10 +33,9 @@ public class ProductController {
     }
 
     @PostMapping("/create")
-    public ResponseEntity<?> add(@RequestBody ProductDto productDto, HttpServletRequest request) {
-        productService.add(productDto);
+    public ResponseEntity<?> create(@RequestBody ProductDto productDto) {
         return ResponseEntity.status(HttpStatus.CREATED)
-                .body(notificationService.generateCreatedNotificationMessage(request));
+                .body(productService.create(productDto));
     }
 
     @PostMapping("/{id}/update")

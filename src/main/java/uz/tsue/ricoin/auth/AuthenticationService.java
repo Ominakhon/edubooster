@@ -38,9 +38,7 @@ public class AuthenticationService {
     public AuthenticationResponse signUp(AuthenticationRequest userDto, HttpServletRequest request) {
         if (userRepository.existsByEmail(userDto.getEmail())) {
             throw new UserAccountException(
-                    messageSource.getMessage("application.exception.notification.EmailExists",
-                            new Object[]{userDto.getEmail()},
-                            RequestContextUtils.getLocale(request))
+                    messageSource.getMessage("application.exception.notification.EmailExists", null, RequestContextUtils.getLocale(request))
             );
         }
 

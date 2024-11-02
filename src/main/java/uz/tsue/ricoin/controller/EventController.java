@@ -34,10 +34,9 @@ public class EventController {
     }
 
     @PostMapping("/create")
-    public ResponseEntity<?> add(@RequestBody EventDto eventDto, HttpServletRequest request) {
-        eventService.add(eventDto);
+    public ResponseEntity<?> create(@RequestBody EventDto eventDto) {
         return ResponseEntity.status(HttpStatus.CREATED)
-                .body(notificationService.generateCreatedNotificationMessage(request));
+                .body(eventService.create(eventDto));
     }
 
     @PostMapping("/{id}/update")

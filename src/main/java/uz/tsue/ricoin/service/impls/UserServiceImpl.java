@@ -1,17 +1,14 @@
 package uz.tsue.ricoin.service.impls;
 
-import jakarta.persistence.EntityManager;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
-import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Service;
-import org.springframework.web.servlet.support.RequestContextUtils;
+import uz.tsue.ricoin.dto.response.UserDto;
 import uz.tsue.ricoin.entity.User;
-import uz.tsue.ricoin.exceptions.UserAccountException;
 import uz.tsue.ricoin.repository.UserRepository;
-import uz.tsue.ricoin.dto.UserDto;
 import uz.tsue.ricoin.service.interfaces.UserService;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -22,8 +19,6 @@ import java.util.Optional;
 public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
-    private final EntityManager entityManager;
-    private final MessageSource messageSource;
 
     @Override
     public User findByEmail(String email) {
@@ -95,24 +90,20 @@ public class UserServiceImpl implements UserService {
 
 
     @Override
-    public void updateUser(UserDto userDto) {
+    public void update(UserDto userDto) {
         User user = userRepository.findByEmail(userDto.getEmail())
-                .orElseThrow(RuntimeException::new);
+                .orElseThrow(RuntimeException::new); //todo throw exception and catch via controller or global handler by implementing i18n
         Optional.ofNullable(userDto.getFirstName()).ifPresent(user::setFirstName);
         Optional.ofNullable(userDto.getLastName()).ifPresent(user::setLastName);
         Optional.ofNullable(userDto.getGroupName()).ifPresent(user::setGroupName);
         Optional.ofNullable(userDto.getPhoneNumber()).ifPresent(user::setPhoneNumber);
+        user.setLastModifiedDate(LocalDateTime.now());
         userRepository.save(user);
     }
 
     @Override
-    public void deleteUser(User user, HttpServletRequest request) {
-        User userToDelete = userRepository.findById(user.getId())
-                .orElseThrow(() -> new UserAccountException(
-                        messageSource.getMessage("application.exception.notification.UserNotFound", null, RequestContextUtils.getLocale(request))
-                ));
-
-        userRepository.delete(userToDelete);
+    public void delete(Long id, HttpServletRequest request) {
+        userRepository.deleteById(id);
     }
 }
 

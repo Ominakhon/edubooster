@@ -10,6 +10,7 @@ import uz.tsue.ricoin.entity.enums.OrderStatus;
 @AllArgsConstructor
 @NoArgsConstructor
 public class OrderResponseDto {
+    private Long id;
     private Product product;
     private Integer quantity;
     private Integer price;

@@ -34,8 +34,10 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public void add(ProductDto productDto) {
-        productRepository.save(getProductFromProductDto(productDto));
+    public ProductDto create(ProductDto productDto) {
+        Product product = getProductFromProductDto(productDto);
+        productRepository.save(product);
+        return getProductDtoFromProduct(product);
     }
 
     @Override
@@ -67,14 +69,15 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public Product findById(Long id){
+    public Product findById(Long id) {
         return productRepository.findById(id)
                 .orElseThrow();
-        //todo implement exception handling
+        // todo implement exception handling
     }
 
     private ProductDto getProductDtoFromProduct(Product product) {
         return ProductDto.builder()
+                .id(product.getId())
                 .name(product.getName())
                 .description(product.getDescription())
                 .imageUrl(product.getImageUrl())
@@ -82,6 +85,7 @@ public class ProductServiceImpl implements ProductService {
                 .availableQuantity(product.getAvailableQuantity())
                 .build();
     }
+
 
     private Product getProductFromProductDto(ProductDto productDto) {
         return Product.builder()
@@ -92,5 +96,6 @@ public class ProductServiceImpl implements ProductService {
                 .availableQuantity(productDto.getAvailableQuantity())
                 .build();
     }
+
 
 }

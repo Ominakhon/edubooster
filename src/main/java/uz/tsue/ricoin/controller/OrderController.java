@@ -7,12 +7,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
-import uz.tsue.ricoin.dto.request.OrderRequestDto;
 import uz.tsue.ricoin.entity.User;
 import uz.tsue.ricoin.service.NotificationService;
 import uz.tsue.ricoin.service.interfaces.OrderService;
-import uz.tsue.ricoin.service.interfaces.ProductService;
-import uz.tsue.ricoin.service.interfaces.UserService;
 
 import java.util.NoSuchElementException;
 
@@ -24,10 +21,9 @@ public class OrderController {
     private final NotificationService notificationService;
 
     @PostMapping("/{productId}/order")
-    public ResponseEntity<?> orderProduct(@AuthenticationPrincipal User user, @PathVariable Long productId, @RequestBody OrderRequestDto orderRequestDto, HttpServletRequest request) {
-        orderService.makeOrder(user, productId, orderRequestDto);
+    public ResponseEntity<?> orderProduct(@AuthenticationPrincipal User user, @PathVariable Long productId, @RequestParam int quantity) {
         return ResponseEntity.status(HttpStatus.OK)
-                .body(notificationService.generateNotificationMessage("application.notification.Successfully", request));
+                .body(orderService.makeOrder(user, productId, quantity));
     }
 
 

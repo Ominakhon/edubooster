@@ -4,7 +4,6 @@ package uz.tsue.ricoin.dto.response;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Data;
 
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
 

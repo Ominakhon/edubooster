@@ -44,8 +44,10 @@ public class EventServiceImpl implements EventService {
     }
 
     @Override
-    public void add(EventDto eventDto) {
-        eventRepository.save(getEventFromEventDto(eventDto));
+    public EventDto create(EventDto eventDto) {
+        Event event = getEventFromEventDto(eventDto);
+        eventRepository.save(event);
+        return getEventDtoFromEvent(event);
     }
 
     @Override
@@ -54,12 +56,10 @@ public class EventServiceImpl implements EventService {
         Optional.ofNullable(eventDto.name()).ifPresent(event::setName);
         Optional.ofNullable(eventDto.description()).ifPresent(event::setDescription);
         Optional.ofNullable(eventDto.place()).ifPresent(event::setPlace);
-        Optional.ofNullable(eventDto.prize()).ifPresent(event::setPrize);
+        Optional.ofNullable(eventDto.price()).ifPresent(event::setPrice);
         event.setPromoCode(promoCodeGeneratorService.generatePromoCode(10));
-        if (eventDto.availableFrom() != null)
-            event.setAvailableFrom(getFormattedDateTime(eventDto.availableFrom()));
-        if (eventDto.availableTill() != null)
-            event.setAvailableTill(getFormattedDateTime(eventDto.availableTill()));
+        if (eventDto.dateTime() != null)
+            event.setDateTime(getFormattedDateTime(eventDto.dateTime()));
 
         eventRepository.save(event);
     }
@@ -86,10 +86,9 @@ public class EventServiceImpl implements EventService {
         return Event.builder()
                 .name(eventDto.name())
                 .description(eventDto.description())
-                .prize(eventDto.prize())
+                .price(eventDto.price())
                 .place(eventDto.place())
-                .availableFrom(getFormattedDateTime(eventDto.availableFrom()))
-                .availableTill(getFormattedDateTime(eventDto.availableTill()))
+                .dateTime(getFormattedDateTime(eventDto.dateTime()))
                 .isActive(true)
                 .promoCode(promoCodeGeneratorService.generatePromoCode(10))
                 .build();
@@ -97,12 +96,12 @@ public class EventServiceImpl implements EventService {
 
     private EventDto getEventDtoFromEvent(Event event){
         return EventDto.builder()
+                .id(event.getId())
                 .name(event.getName())
                 .description(event.getDescription())
                 .place(event.getPlace())
-                .prize(event.getPrize())
-                .availableFrom(event.getAvailableFrom().toString())
-                .availableTill(event.getAvailableTill().toString())
+                .price(event.getPrice())
+                .dateTime(event.getDateTime().toString())
                 .isActive(event.isActive())
                 .promoCode(event.getPromoCode())
                 .build();

@@ -8,6 +8,6 @@ import java.io.Serializable;
  * DTO for {@link uz.tsue.ricoin.entity.Event}
  */
 @Builder
-public record EventDto(String name, String description, String place, Integer prize,
-                       String availableFrom, String availableTill, boolean isActive, String promoCode) implements Serializable {
+public record EventDto(Long id, String name, String description, String place, Integer price,
+                       boolean isActive, String promoCode, String dateTime) implements Serializable {
 }

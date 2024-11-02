@@ -1,6 +1,5 @@
 package uz.tsue.ricoin.service.interfaces;
 
-import jdk.dynalink.linker.LinkerServices;
 import uz.tsue.ricoin.dto.ProductDto;
 import uz.tsue.ricoin.entity.Product;
 
@@ -14,7 +13,7 @@ public interface ProductService {
 
     Product findById(Long id);
 
-    void add(ProductDto productDto);
+    ProductDto create(ProductDto productDto);
 
     void update(Long id, ProductDto productDto);
 

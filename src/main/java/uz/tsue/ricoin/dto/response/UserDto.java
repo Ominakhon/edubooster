@@ -17,7 +17,7 @@ import java.util.List;
 @AllArgsConstructor
 @Getter
 @Setter
-public class UserResponseDto implements Serializable {
+public class UserDto implements Serializable {
     private String email;
     private String firstName;
     private String lastName;

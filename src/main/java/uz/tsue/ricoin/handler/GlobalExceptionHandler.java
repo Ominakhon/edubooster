@@ -12,11 +12,11 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import uz.tsue.ricoin.dto.response.ValidationErrorResponse;
 import uz.tsue.ricoin.exceptions.InsufficientBalanceException;
 import uz.tsue.ricoin.exceptions.InsufficientStockException;
 import uz.tsue.ricoin.exceptions.InvalidRequestException;
 import uz.tsue.ricoin.exceptions.UserAccountException;
-import uz.tsue.ricoin.dto.response.ValidationErrorResponse;
 import uz.tsue.ricoin.service.NotificationService;
 
 import java.util.ArrayList;
