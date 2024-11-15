@@ -37,6 +37,7 @@ public class UserServiceImpl implements UserService {
         for (User user : userList) {
             users.add(
                     UserDto.builder()
+                            .id(user.getId())
                             .email(user.getEmail())
                             .phoneNumber(user.getPhoneNumber())
                             .firstName(user.getFirstName())
@@ -76,6 +77,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserDto getCurrentUser(User user) {
         return UserDto.builder()
+                .id(user.getId())
                 .email(user.getEmail())
                 .firstName(user.getFirstName())
                 .lastName(user.getLastName())

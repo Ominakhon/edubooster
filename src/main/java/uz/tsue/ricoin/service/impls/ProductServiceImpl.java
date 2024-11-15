@@ -2,6 +2,7 @@ package uz.tsue.ricoin.service.impls;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 import uz.tsue.ricoin.dto.ProductDto;
 import uz.tsue.ricoin.entity.Product;
 import uz.tsue.ricoin.repository.ProductRepository;
@@ -34,7 +35,7 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public ProductDto create(ProductDto productDto) {
+    public ProductDto create(ProductDto productDto, MultipartFile file) {
         Product product = getProductFromProductDto(productDto);
         productRepository.save(product);
         return getProductDtoFromProduct(product);
@@ -47,7 +48,7 @@ public class ProductServiceImpl implements ProductService {
         Optional.ofNullable(productDto.getDescription()).ifPresent(product::setDescription);
         if (productDto.getPrice() != 0)
             product.setPrice(productDto.getPrice());
-        Optional.ofNullable(productDto.getImageUrl()).ifPresent(product::setImageUrl);
+//        Optional.ofNullable(productDto.getImageUrl()).ifPresent(product::setImageUrl);
 
         productRepository.save(product);
     }
@@ -80,7 +81,7 @@ public class ProductServiceImpl implements ProductService {
                 .id(product.getId())
                 .name(product.getName())
                 .description(product.getDescription())
-                .imageUrl(product.getImageUrl())
+                .imageUrl(product.getImgUrl())
                 .price(product.getPrice())
                 .availableQuantity(product.getAvailableQuantity())
                 .build();
@@ -92,7 +93,7 @@ public class ProductServiceImpl implements ProductService {
                 .name(productDto.getName())
                 .description(productDto.getDescription())
                 .price(productDto.getPrice())
-                .imageUrl(productDto.getImageUrl())
+                .imgUrl(productDto.getImageUrl())
                 .availableQuantity(productDto.getAvailableQuantity())
                 .build();
     }

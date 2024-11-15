@@ -6,6 +6,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import uz.tsue.ricoin.dto.ProductDto;
 import uz.tsue.ricoin.service.NotificationService;
 import uz.tsue.ricoin.service.interfaces.ProductService;
@@ -33,9 +34,9 @@ public class ProductController {
     }
 
     @PostMapping("/create")
-    public ResponseEntity<?> create(@RequestBody ProductDto productDto) {
+    public ResponseEntity<?> create(@RequestBody ProductDto productDto, @RequestParam MultipartFile file) {
         return ResponseEntity.status(HttpStatus.CREATED)
-                .body(productService.create(productDto));
+                .body(productService.create(productDto, file));
     }
 
     @PostMapping("/{id}/update")

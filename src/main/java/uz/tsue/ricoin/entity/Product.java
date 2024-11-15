@@ -1,10 +1,11 @@
 package uz.tsue.ricoin.entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.*;
+import org.apache.catalina.LifecycleState;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Builder
@@ -22,8 +23,7 @@ public class Product {
     private String name;
     private String description;
     private Integer price;
-    private String imageUrl;
     private int availableQuantity;
-
+    private String imgUrl;
 
 }
