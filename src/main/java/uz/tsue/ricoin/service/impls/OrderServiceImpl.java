@@ -13,6 +13,7 @@ import uz.tsue.ricoin.entity.enums.OrderStatus;
 import uz.tsue.ricoin.exceptions.InsufficientBalanceException;
 import uz.tsue.ricoin.exceptions.InsufficientStockException;
 import uz.tsue.ricoin.exceptions.InvalidRequestException;
+import uz.tsue.ricoin.exceptions.OrderNotFoundException;
 import uz.tsue.ricoin.repository.OrderRepository;
 import uz.tsue.ricoin.service.interfaces.OrderService;
 import uz.tsue.ricoin.service.interfaces.ProductService;
@@ -51,18 +52,25 @@ public class OrderServiceImpl implements OrderService {
         }
         return orders;
     }
-
     @Override
-    public Order find(Long id) {
-        return orderRepository.findById(id)
-                .orElseThrow();
-
-        //todo implement exception handling
+    public Order find(Long id, HttpServletRequest request) {
+        return orderRepository.findById(id).orElseThrow(() ->
+                new OrderNotFoundException(
+                        messageSource.getMessage(
+                                "application.exception.notification.OrderNotFound",
+                                null,
+                                RequestContextUtils.getLocale(request)
+                        )
+                )
+        );
     }
 
+
+
+
     @Override
-    public OrderResponseDto makeOrder(User user, Long id, int quantity) {
-        Product product = productService.findById(id);
+    public OrderResponseDto makeOrder(User user, Long id, int quantity, HttpServletRequest request) {
+        Product product = productService.findById(id, request);
 
         if (productService.isStockAvailable(product, quantity)) {
 
@@ -92,7 +100,7 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public void cancelOrder(Long orderId, HttpServletRequest request) {
-        Order order = find(orderId);
+        Order order = find(orderId, request);
         if (!order.getStatus().equals(OrderStatus.CANCELED)) {
             order.setStatus(OrderStatus.CANCELED);
             orderRepository.save(order);
@@ -108,7 +116,7 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public void approveOrder(Long orderId, HttpServletRequest request) {
-        Order order = find(orderId);
+        Order order = find(orderId, request);
         order.setStatus(OrderStatus.APPROVED);
         User user = order.getUser();
         user.setOrders(List.of(order));

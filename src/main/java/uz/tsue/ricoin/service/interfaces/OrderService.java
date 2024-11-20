@@ -10,7 +10,9 @@ import java.util.List;
 public interface OrderService {
     void save(Order order);
 
-    OrderResponseDto makeOrder(User user, Long id, int quantity);
+//    OrderResponseDto makeOrder(User user, Long id, int quantity);
+
+    OrderResponseDto makeOrder(User user, Long id, int quantity, HttpServletRequest request);
 
     void cancelOrder(Long orderId, HttpServletRequest request);
 
@@ -18,9 +20,11 @@ public interface OrderService {
 
     List<OrderResponseDto> getAll(Long userId);
 
-    Order find(Long id);
+//    Order find(Long id);
 
     void remove(Long id);
 
     void approveOrder(Long orderId, HttpServletRequest request);
+
+    Order find(Long id, HttpServletRequest request);
 }

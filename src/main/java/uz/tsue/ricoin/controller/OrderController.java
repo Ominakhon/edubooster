@@ -21,9 +21,9 @@ public class OrderController {
     private final NotificationService notificationService;
 
     @PostMapping("/{productId}/order")
-    public ResponseEntity<?> orderProduct(@AuthenticationPrincipal User user, @PathVariable Long productId, @RequestParam int quantity) {
+    public ResponseEntity<?> orderProduct(@AuthenticationPrincipal User user, @PathVariable Long productId, @RequestParam int quantity, HttpServletRequest request) {
         return ResponseEntity.status(HttpStatus.OK)
-                .body(orderService.makeOrder(user, productId, quantity));
+                .body(orderService.makeOrder(user, productId, quantity, request));
     }
 
 

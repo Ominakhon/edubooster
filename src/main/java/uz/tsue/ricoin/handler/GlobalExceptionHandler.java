@@ -3,6 +3,7 @@ package uz.tsue.ricoin.handler;
 import jakarta.mail.MessagingException;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
+import org.springdoc.core.service.GenericResponseService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
@@ -13,12 +14,10 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import uz.tsue.ricoin.dto.response.ValidationErrorResponse;
-import uz.tsue.ricoin.exceptions.InsufficientBalanceException;
-import uz.tsue.ricoin.exceptions.InsufficientStockException;
-import uz.tsue.ricoin.exceptions.InvalidRequestException;
-import uz.tsue.ricoin.exceptions.UserAccountException;
+import uz.tsue.ricoin.exceptions.*;
 import uz.tsue.ricoin.service.NotificationService;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -29,6 +28,7 @@ import java.util.Map;
 public class GlobalExceptionHandler {
 
     private final NotificationService notificationService;
+    private final GenericResponseService responseBuilder;
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
@@ -81,5 +81,11 @@ public class GlobalExceptionHandler {
     public ResponseEntity<?> handleInsufficientStockException(HttpServletRequest request) {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                 .body(notificationService.generateNotificationMessage("application.exception.notification.InsufficientStock", request));
+    }
+
+    @ExceptionHandler(OrderNotFoundException.class)
+    public ResponseEntity<?> handleOrderNotFoundException(HttpServletRequest request) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                .body(notificationService.generateNotificationMessage("application.exception.notification.OrderNotFound", request));
     }
 }

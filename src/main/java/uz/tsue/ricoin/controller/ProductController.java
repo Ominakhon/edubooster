@@ -16,15 +16,15 @@ import java.util.NoSuchElementException;
 @RestController
 @RequestMapping("admin/product")
 @RequiredArgsConstructor
-@PreAuthorize("hasAuthority('ADMIN')")
+@PreAuthorize("hasAuthority({'ADMIN'})")
 public class ProductController {
     private final ProductService productService;
     private final NotificationService notificationService;
 
     @GetMapping("/{id}/get")
-    public ResponseEntity<?> get(@PathVariable Long id) {
+    public ResponseEntity<?> get(@PathVariable Long id, HttpServletRequest request) {
         return ResponseEntity.status(HttpStatus.OK)
-                .body(productService.get(id));
+                .body(productService.get(id, request));
     }
 
     @GetMapping("/all/get")
@@ -41,14 +41,14 @@ public class ProductController {
 
     @PostMapping("/{id}/update")
     public ResponseEntity<?> update(@PathVariable Long id, @RequestBody ProductDto productDto, HttpServletRequest request) {
-        productService.update(id, productDto);
+        productService.update(id, productDto, request);
         return ResponseEntity.status(HttpStatus.OK)
                 .body(notificationService.generateUpdatedNotificationMessage(request));
     }
 
     @DeleteMapping("/{id}/remove")
     public ResponseEntity<?> remove(@PathVariable Long id, HttpServletRequest request) {
-        productService.remove(id);
+        productService.remove(id, request);
         return ResponseEntity.status(HttpStatus.OK)
                 .body(notificationService.generateRemovedNotificationMessage(request));
     }
@@ -56,7 +56,7 @@ public class ProductController {
 
     @PostMapping("/{id}/add-quantity")
     public ResponseEntity<?> addQuantity(@PathVariable Long id, @RequestParam int quantity, HttpServletRequest request) {
-        productService.addProductQuantity(productService.findById(id), quantity);
+        productService.addProductQuantity(productService.findById(id, request), quantity);
         return ResponseEntity.status(HttpStatus.OK)
                 .body(notificationService.generateNotificationMessage("application.notification.Successfully", request));
     }

@@ -15,6 +15,9 @@ public interface UserService {
 
     void save(User user);
 
+//    void save(User user, HttpServletRequest request);
+
+
     boolean hasEnoughBalance(int amount, User user);
 
     void debitBalance(User user, int amount);
@@ -24,7 +27,9 @@ public interface UserService {
     UserDto getCurrentUser(User user);
 
 
-    void update(UserDto userDto);
+//    void update(UserDto userDto);
+
+    void update(UserDto userDto, HttpServletRequest request);
 
     void delete(Long id, HttpServletRequest request);
 }

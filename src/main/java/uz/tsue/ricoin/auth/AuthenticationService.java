@@ -19,7 +19,6 @@ import uz.tsue.ricoin.exceptions.UserAccountException;
 import uz.tsue.ricoin.repository.UserRepository;
 import uz.tsue.ricoin.repository.VerificationCodeRepository;
 import uz.tsue.ricoin.service.EmailService;
-
 import java.security.SecureRandom;
 import java.time.LocalDateTime;
 import java.util.Optional;

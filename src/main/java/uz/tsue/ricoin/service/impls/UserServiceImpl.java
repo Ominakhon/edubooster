@@ -2,9 +2,12 @@ package uz.tsue.ricoin.service.impls;
 
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Service;
+import org.springframework.web.servlet.support.RequestContextUtils;
 import uz.tsue.ricoin.dto.response.UserDto;
 import uz.tsue.ricoin.entity.User;
+import uz.tsue.ricoin.exceptions.InvalidRequestException;
 import uz.tsue.ricoin.repository.UserRepository;
 import uz.tsue.ricoin.service.interfaces.UserService;
 
@@ -19,6 +22,7 @@ import java.util.Optional;
 public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
+    private final MessageSource messageSource;
 
     @Override
     public User findByEmail(String email) {
@@ -92,9 +96,15 @@ public class UserServiceImpl implements UserService {
 
 
     @Override
-    public void update(UserDto userDto) {
+    public void update(UserDto userDto, HttpServletRequest request) {
         User user = userRepository.findByEmail(userDto.getEmail())
-                .orElseThrow(RuntimeException::new); //todo throw exception and catch via controller or global handler by implementing i18n
+                .orElseThrow(()->
+                        new InvalidRequestException(
+                                messageSource.getMessage("application.exception.notification.UserNotFound",
+                                        null,
+                                        RequestContextUtils.getLocale(request))
+                        )
+                );
         Optional.ofNullable(userDto.getFirstName()).ifPresent(user::setFirstName);
         Optional.ofNullable(userDto.getLastName()).ifPresent(user::setLastName);
         Optional.ofNullable(userDto.getGroupName()).ifPresent(user::setGroupName);

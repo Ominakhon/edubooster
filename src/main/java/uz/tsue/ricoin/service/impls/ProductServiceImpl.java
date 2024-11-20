@@ -1,10 +1,14 @@
 package uz.tsue.ricoin.service.impls;
 
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.support.RequestContextUtils;
 import uz.tsue.ricoin.dto.ProductDto;
 import uz.tsue.ricoin.entity.Product;
+import uz.tsue.ricoin.exceptions.InsufficientStockException;
 import uz.tsue.ricoin.repository.ProductRepository;
 import uz.tsue.ricoin.service.interfaces.ProductService;
 
@@ -17,10 +21,11 @@ import java.util.Optional;
 public class ProductServiceImpl implements ProductService {
 
     private final ProductRepository productRepository;
+    private final MessageSource messageSource;
 
     @Override
-    public ProductDto get(Long id) {
-        Product product = findById(id);
+    public ProductDto get(Long id, HttpServletRequest request) {
+        Product product = findById(id, request);
         return getProductDtoFromProduct(product);
     }
 
@@ -42,8 +47,8 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public void update(Long id, ProductDto productDto) {
-        Product product = findById(id);
+    public void update(Long id, ProductDto productDto, HttpServletRequest request) {
+        Product product = findById(id, request);
         Optional.ofNullable(productDto.getName()).ifPresent(product::setName);
         Optional.ofNullable(productDto.getDescription()).ifPresent(product::setDescription);
         if (productDto.getPrice() != 0)
@@ -54,8 +59,8 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public void remove(Long id) {
-        productRepository.delete(findById(id));
+    public void remove(Long id, HttpServletRequest request) {
+        productRepository.delete(findById(id, request));
     }
 
     @Override
@@ -70,10 +75,16 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public Product findById(Long id) {
-        return productRepository.findById(id)
-                .orElseThrow();
-        // todo implement exception handling
+    public Product findById(Long id, HttpServletRequest request) {
+
+        return productRepository.findById(id).orElseThrow(() ->
+                new InsufficientStockException(
+                        messageSource.getMessage(
+                                "application.exception.notification.ProductNotFound",
+                                null,
+                                RequestContextUtils.getLocale(request)
+                        )
+                ));
     }
 
     private ProductDto getProductDtoFromProduct(Product product) {

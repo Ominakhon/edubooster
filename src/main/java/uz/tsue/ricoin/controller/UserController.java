@@ -41,10 +41,10 @@ public class UserController {
     }
 
 
-    @PreAuthorize("hasAnyAuthority('ADMIN')")
+//    @PreAuthorize("hasAnyAuthority('ADMIN')")
     @PutMapping("/update")
     public ResponseEntity<?> update(@RequestBody UserDto user, HttpServletRequest request) {
-        userService.update(user);
+        userService.update(user, request);
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(notificationService.generateUpdatedNotificationMessage(request));
     }
